@@ -116,14 +116,18 @@ class InspectionState {
   }
 
   replaceSurface(index, newFile) {
-    if (index >= 0 && index < this.surfaces.length) {
-      URL.revokeObjectURL(this.surfaces[index].previewUrl);
-      this.surfaces[index].file = newFile;
-      this.surfaces[index].previewUrl = URL.createObjectURL(newFile);
-      this.isSaved = false;
-      this.notify();
-    }
+  if (index >= 0 && index < this.surfaces.length) {
+    URL.revokeObjectURL(this.surfaces[index].previewUrl);
+    this.surfaces[index].file = newFile;
+    this.surfaces[index].previewUrl = URL.createObjectURL(newFile);
+    this.isSaved = false;
+    this.notify();
   }
+}
+
+replaceSurfaceFile(index, newFile) {
+  this.replaceSurface(index, newFile);
+}
 
   removeSurface(index) {
     if (index >= 0 && index < this.surfaces.length) {
@@ -150,9 +154,13 @@ class InspectionState {
   // ── Client Hints ──────────────────────────────────────────────────────────
 
   setHints(hints) {
-    this.clientHints = { ...this.clientHints, ...hints };
-    this.notify();
-  }
+  this.clientHints = { ...this.clientHints, ...hints };
+  this.notify();
+}
+
+setClientHints(hints) {
+  this.setHints(hints);
+}
 
   // ── Loading & Errors ──────────────────────────────────────────────────────
 
