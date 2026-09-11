@@ -232,7 +232,7 @@ export function attachScanPageEvents() {
   const btnReset = document.getElementById('btn-reset-scan');
   if (btnReset) {
     btnReset.addEventListener('click', () => {
-      inspectionContext.resetInspection();
+      inspectionContext.reset();
     });
   }
 
@@ -292,22 +292,22 @@ export function attachScanPageEvents() {
 
       try {
         inspectionContext.setLoading(true, 'Extracting statutory declarations & aligning text blocks...');
-        const res = await submitScan(files, {
-          productName,
-          manufacturer,
-          netQuantity: netQty,
-          mrp,
-          ocrText,
-          surfaces: curr.surfaces.map(s => s.surface),
-        });
+        const res = await submitScan({
+  files,
+  productName,
+  manufacturer,
+  netQuantity: netQty,
+  mrp,
+  ocrText,
+});
 
-        if (res && res.data) {
-          inspectionContext.setCurrentInspection(res.data);
-          inspectionContext.setLoading(false);
-          router.navigate(`/inspections/${res.data.id}/review`);
-        } else {
-          throw new Error(res?.message || 'Server returned an invalid inspection response.');
-        }
+if (res && res.data) {
+  inspectionContext.setScanResult(res.data);
+  inspectionContext.setLoading(false);
+  router.navigate(`/inspections/${res.data.id}/review`);
+} else {
+  throw new Error(res?.message || 'Server returned an invalid inspection response.');
+}
       } catch (err) {
         console.error('Scan submission error:', err);
         inspectionContext.setError(err.message || 'Failed to analyze package.');
