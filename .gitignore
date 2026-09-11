@@ -1,0 +1,64 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+.env
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Database
+*.db
+*.sqlite3
+*.sqlite
+
+# Local database
+legal_metrology.db
+
+# Frontend - no build artifacts (no build step)
+# But if any build is added later:
+# dist/
+# build/
+
+# Environment files (secrets)
+.env
+.env.local
+.env.*.local
+
+# Supabase
+.supabase/
+
+# Test artifacts
+.pytest_cache/
+.coverage
+htmlcov/
+
+# IDE specific
+*.swp
+*.swo
+*~
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
