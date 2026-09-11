@@ -55,12 +55,12 @@ async def scan_label(
             detail="No image files provided or filenames are missing.",
         )
 
-    uuploaded_storage_paths = []
+        uploaded_storage_paths = []
     extractions_list = []
     avg_confidences = []
 
-# Initialize OCR engine once and reuse it for all images in this scan
-ocr_svc = get_ocr_service()
+    # Initialize OCR engine once and reuse it for all images in this scan
+    ocr_svc = get_ocr_service()
 
     try:
         for idx, img in enumerate(image_list):
@@ -88,7 +88,7 @@ ocr_svc = get_ocr_service()
                     detail=f"Image storage failed for '{img.filename}': {str(se)}",
                 )
 
-            if ocr_text and ocr_text.strip() and idx == 0:
+                        if ocr_text and ocr_text.strip() and idx == 0:
                 ocr_result = OCRResult(
                     raw_text=ocr_text.strip(),
                     confidence=100.0,
@@ -97,10 +97,10 @@ ocr_svc = get_ocr_service()
                     model="external",
                 )
             else:
-    try:
-        processed_bytes = preprocess_image(img_bytes)
-        ocr_result = ocr_svc.extract_text(processed_bytes)
-    except Exception as oe:
+                try:
+                    processed_bytes = preprocess_image(img_bytes)
+                    ocr_result = ocr_svc.extract_text(processed_bytes)
+                except Exception as oe:
                     logger.error(f"OCR processing error for '{img.filename}': {oe}")
                     ocr_result = OCRResult(
                         raw_text="",
