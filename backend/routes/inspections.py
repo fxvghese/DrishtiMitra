@@ -88,7 +88,7 @@ async def scan_label(
                     detail=f"Image storage failed for '{img.filename}': {str(se)}",
                 )
 
-                        if ocr_text and ocr_text.strip() and idx == 0:
+            if ocr_text and ocr_text.strip() and idx == 0:
                 ocr_result = OCRResult(
                     raw_text=ocr_text.strip(),
                     confidence=100.0,
