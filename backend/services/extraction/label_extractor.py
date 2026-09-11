@@ -20,8 +20,8 @@ def normalize_ocr_text(text: str) -> str:
     # Order matters: specific patterns first
     text = re.sub(r'\bmfg\s+date\s*[:\-]?\s*', 'Mfg Date: ', text, flags=re.IGNORECASE)
     text = re.sub(r'\bmfg\s+(?:by|mfd|manufactured)\s*[:\-]?\s*', 'Mfg By: ', text, flags=re.IGNORECASE)
-    # Generic Mfg: but NOT if followed by "By" (that's manufacturer, not date)
-    text = re.sub(r'\bmfg\s*[:\-]?\s*(?!by\b)', 'Mfg: ', text, flags=re.IGNORECASE)
+    # Generic Mfg: but NOT if followed by optional whitespace + "By" (that's manufacturer, not date)
+    text = re.sub(r'\bmfg\s*[:\-]?\s*(?!\s*by\b)', 'Mfg: ', text, flags=re.IGNORECASE)
     text = re.sub(r'\bpkd?\s*(?:date|by)?\s*[:\-]?\s*', 'Pkd: ', text, flags=re.IGNORECASE)
     return text.strip()
 
