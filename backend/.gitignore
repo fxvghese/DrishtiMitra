@@ -33,6 +33,5 @@ htmlcov/
 
 # Local Datasets (Phase 5B)
 DM-Resources/
-Catalogue/
 *.csv
 
