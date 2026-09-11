@@ -1,10 +1,10 @@
 /**
  * DrishtiMitra - Mobile-First Global Core Styles & Responsive System
- * Optimized primarily for 320px–430px mobile viewports (reference: 390px)
- * with seamless adaptation for tablets and desktops.
+ * Visual Identity: Inspection-grade Green + White Theme
+ * Optimized for mobile viewports (320px–430px) and seamlessly adaptive to desktop.
  */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
 @import './tokens.css';
 
 /* CSS Reset & Touch Defaults */
@@ -36,16 +36,15 @@ body {
   overflow-x: hidden;
   width: 100%;
   background-image: 
-    radial-gradient(at 0% 0%, rgba(37, 99, 235, 0.14) 0px, transparent 48%),
-    radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.08) 0px, transparent 48%),
-    radial-gradient(at 50% 50%, rgba(15, 23, 42, 0.5) 0px, transparent 100%);
+    radial-gradient(circle at 10% 10%, rgba(234, 247, 238, 0.7) 0%, transparent 40%),
+    radial-gradient(circle at 90% 90%, rgba(244, 251, 246, 0.9) 0%, transparent 50%);
   background-attachment: fixed;
   padding-top: var(--safe-area-top);
   padding-left: var(--safe-area-left);
   padding-right: var(--safe-area-right);
 }
 
-/* Custom Scrollbar (Desktop/Tablet) */
+/* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -56,32 +55,32 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
+  background: #CBD5E1;
   border-radius: var(--radius-full);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.28);
+  background: #94A3B8;
 }
 
 ::selection {
-  background: rgba(59, 130, 246, 0.35);
-  color: #ffffff;
+  background: #BBF7D0;
+  color: #14532D;
 }
 
-/* Typography Defaults - Mobile Scaled with Clamps */
+/* Typography Defaults */
 h1, h2, h3, h4, h5, h6 {
   color: var(--text-primary);
   font-weight: 700;
   line-height: 1.25;
-  letter-spacing: -0.025em;
+  letter-spacing: -0.02em;
   word-break: break-word;
 }
 
-h1 { font-size: clamp(1.4rem, 5vw, 2.1rem); font-weight: 800; }
-h2 { font-size: clamp(1.2rem, 4vw, 1.7rem); font-weight: 800; }
-h3 { font-size: clamp(1.05rem, 3.5vw, 1.35rem); font-weight: 700; }
-h4 { font-size: clamp(0.95rem, 3vw, 1.15rem); font-weight: 700; }
+h1 { font-size: clamp(1.35rem, 5vw, 1.95rem); font-weight: 800; }
+h2 { font-size: clamp(1.15rem, 4vw, 1.6rem); font-weight: 800; }
+h3 { font-size: clamp(1.0rem, 3.5vw, 1.3rem); font-weight: 700; }
+h4 { font-size: clamp(0.92rem, 3vw, 1.1rem); font-weight: 700; }
 
 p {
   color: var(--text-secondary);
@@ -91,10 +90,14 @@ p {
 }
 
 a {
-  color: var(--primary-400);
+  color: var(--primary-600);
   text-decoration: none;
   transition: color var(--transition-fast), opacity var(--transition-fast);
   touch-action: manipulation;
+}
+
+a:hover {
+  color: var(--primary-700);
 }
 
 code, kbd, samp, pre {
@@ -125,12 +128,12 @@ code, kbd, samp, pre {
   width: 100%;
   max-width: var(--max-content-width);
   margin: 0 auto;
-  padding: var(--space-4) var(--space-3) calc(var(--mobile-bottom-bar-height) + var(--safe-area-bottom) + var(--space-6)) var(--space-3);
+  padding: var(--space-3) var(--space-4) calc(var(--mobile-bottom-bar-height) + var(--safe-area-bottom) + var(--space-8)) var(--space-4);
 }
 
 @media (min-width: 768px) {
   .content-wrapper {
-    padding: var(--space-8) var(--space-6) var(--space-8) var(--space-6);
+    padding: var(--space-6) var(--space-8) var(--space-10) var(--space-8);
   }
 }
 
@@ -139,33 +142,28 @@ button, input, select, textarea, a {
   touch-action: manipulation;
 }
 
-/* Prevent iOS Safari input auto-zoom by enforcing >=16px font size on touch screens */
 @media (max-width: 768px) {
   input, select, textarea {
     font-size: 16px !important;
   }
 }
 
-/* Hover vs Touch distinction */
+/* Button & Interactive Hover/Active */
 @media (hover: hover) and (pointer: fine) {
-  a:hover {
-    color: var(--primary-200);
-  }
   .btn-primary:hover:not(:disabled) {
-    background: linear-gradient(180deg, var(--primary-400) 0%, var(--primary-500) 100%);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5), 0 0 20px rgba(59, 130, 246, 0.45);
+    background: var(--primary-600);
+    box-shadow: 0 4px 12px rgba(22, 163, 74, 0.28);
     transform: translateY(-1px);
   }
   .btn-secondary:hover:not(:disabled) {
-    background: var(--bg-surface-hover);
-    color: #ffffff;
+    background: #F1F5F9;
+    color: var(--text-primary);
     transform: translateY(-1px);
   }
 }
 
-/* Immediate touch active states for mobile */
 .btn:active:not(:disabled), .nav-link:active, .card:active {
-  transform: scale(0.98);
+  transform: scale(0.985);
 }
 
 /* Animations */
@@ -179,9 +177,15 @@ button, input, select, textarea, a {
   to { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes pulseGlow {
-  0%, 100% { opacity: 0.6; transform: scale(1); }
-  50% { opacity: 1; transform: scale(1.05); }
+@keyframes laserScan {
+  0% { top: 12%; opacity: 0.8; }
+  50% { top: 82%; opacity: 1; }
+  100% { top: 12%; opacity: 0.8; }
+}
+
+@keyframes pulseSubtle {
+  0%, 100% { transform: scale(1); opacity: 0.9; }
+  50% { transform: scale(1.04); opacity: 1; }
 }
 
 @keyframes spin {
@@ -190,7 +194,7 @@ button, input, select, textarea, a {
 }
 
 .animate-fade-in {
-  animation: fadeIn 280ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: fadeIn 260ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .animate-slide-down {
@@ -203,7 +207,7 @@ button, input, select, textarea, a {
 
 /* Accessibility */
 :focus-visible {
-  outline: 2px solid var(--primary-400);
+  outline: 2px solid var(--primary-500);
   outline-offset: 2px;
 }
 

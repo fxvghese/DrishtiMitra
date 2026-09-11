@@ -1,7 +1,7 @@
 /**
  * DrishtiMitra - ReviewPage Component
- * Verification Panel for reviewing OCR field extractions before compliance evaluation
- * Provides surface evidence check, ambiguity alerts, and execution trigger
+ * Verification Panel for reviewing OCR field extractions before statutory rule evaluation
+ * Visual Identity: Green & White inspection card format
  */
 
 import { renderImageGallery } from '../components/ImageGallery.js';
@@ -9,7 +9,6 @@ import { renderExtractedDataTable } from '../components/ExtractedDataTable.js';
 import { renderStatusBadge } from '../components/StatusBadge.js';
 import { renderButton } from '../components/Button.js';
 import { renderAlert } from '../components/Alert.js';
-import { renderLoadingSpinner } from '../components/LoadingSpinner.js';
 import { renderEmptyState } from '../components/EmptyState.js';
 import { icons } from '../assets/icons.js';
 import { inspectionContext } from '../context/InspectionContext.js';
@@ -23,15 +22,47 @@ export function renderReviewPage(params = {}) {
 
   if (state.isLoading) {
     return `
-      <div class="card card-glass animate-fade-in" style="max-width: 720px; margin: var(--space-8) auto; text-align: center;">
-        ${renderLoadingSpinner(state.loadingMessage || 'Executing Legal Metrology Rule Engine...')}
+      <div class="processing-pipeline-card animate-fade-in">
+        <div style="width: 56px; height: 56px; border-radius: 50%; background: var(--primary-100); color: var(--primary-600); display: flex; align-items: center; justify-content: center; margin: 0 auto var(--space-3);">
+          <div class="animate-spin" style="width: 28px; height: 28px; border: 3px solid var(--primary-200); border-top-color: var(--primary-600); border-radius: 50%;"></div>
+        </div>
+
+        <h3 style="font-size: var(--text-lg); font-weight: 800; color: var(--text-primary); margin-bottom: 4px;">
+          Evaluating Compliance Rules
+        </h3>
+        <p style="font-size: var(--text-xs); color: var(--text-secondary); max-width: 380px; margin: 0 auto;">
+          ${state.loadingMessage || 'Evaluating physical commodities against Legal Metrology Rules, 2011'}
+        </p>
+
+        <!-- Pipeline Steps -->
+        <div class="pipeline-step-list">
+          <div class="pipeline-step-item">
+            <span class="step-indicator-icon step-done">✓</span>
+            <span style="font-weight: 600; color: var(--primary-800);">Declarations extracted & mapped</span>
+          </div>
+
+          <div class="pipeline-step-item" style="border-color: var(--primary-400); background: var(--bg-mint);">
+            <span class="step-indicator-icon step-active">●</span>
+            <span style="font-weight: 700; color: var(--primary-900);">Running Rule Engine (Rules 6–26)</span>
+          </div>
+
+          <div class="pipeline-step-item" style="opacity: 0.85;">
+            <span class="step-indicator-icon step-pending">○</span>
+            <span style="color: var(--text-secondary);">Cross-checking reference catalogue</span>
+          </div>
+
+          <div class="pipeline-step-item" style="opacity: 0.7;">
+            <span class="step-indicator-icon step-pending">○</span>
+            <span style="color: var(--text-secondary);">Generating statutory findings dossier</span>
+          </div>
+        </div>
       </div>
     `;
   }
 
   if (!inspection) {
     return `
-      <div class="card card-glass" style="max-width: 600px; margin: var(--space-8) auto;">
+      <div class="card" style="max-width: 520px; margin: var(--space-8) auto; padding: var(--space-6); text-align: center;">
         ${renderEmptyState({
           title: 'No Active Inspection Found',
           message: 'Please start a new inspection scan or upload package photos to review extractions.',
@@ -56,111 +87,111 @@ export function renderReviewPage(params = {}) {
   const isOnlyFront = surfaces.length > 0 && hasFront && !hasBack;
 
   return `
-    <div class="review-page-container animate-fade-in">
-      <!-- Breadcrumb Header -->
-      <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--space-3); margin-bottom: var(--space-6);">
+    <div class="review-page-container animate-fade-in" style="max-width: 780px; margin: 0 auto;">
+      <!-- Header -->
+      <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--space-3); margin-bottom: var(--space-4);">
         <div>
-          <div style="display: flex; align-items: center; gap: var(--space-2); font-size: var(--text-xs); color: var(--text-muted); font-family: var(--font-mono); margin-bottom: 4px;">
-            <span>INSPECTION ID:</span>
-            <span style="color: var(--text-primary); font-weight: 700;">${inspection.id}</span>
+          <div style="display: flex; align-items: center; gap: var(--space-2); font-size: 11px; color: var(--text-secondary); font-family: var(--font-mono); margin-bottom: 2px;">
+            <span>ID: <strong style="color: var(--text-primary);">${inspection.id}</strong></span>
             <span>•</span>
             <span>${formatDate(inspection.created_at)}</span>
           </div>
-          <h1 style="font-size: var(--text-2xl); font-weight: 800; color: var(--text-primary);">
-            Extraction Verification Panel
+          <h1 style="font-size: clamp(1.3rem, 4.5vw, 1.75rem); font-weight: 800; color: var(--text-primary); margin: 0;">
+            Extraction Verification
           </h1>
         </div>
 
-        <div style="display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap;">
+        <div style="display: flex; align-items: center; gap: var(--space-2); flex-wrap: wrap;">
           ${renderStatusBadge(inspection.status || 'REVIEW', 'compliance')}
           <a href="#/scan" class="btn btn-secondary btn-sm">
-            ${icons.camera} Add Surface / Retake
+            ${icons.camera} Add Surface
           </a>
         </div>
       </div>
 
       ${state.error ? `
-        ${renderAlert({
-          type: 'danger',
-          title: 'Evaluation Error',
-          message: state.error,
-        })}
+        <div style="margin-bottom: var(--space-4);">
+          ${renderAlert({
+            type: 'danger',
+            title: 'Evaluation Error',
+            message: state.error,
+          })}
+        </div>
       ` : ''}
 
       ${isOnlyFront ? `
-        <div class="alert alert-warning animate-fade-in" style="margin-bottom: var(--space-4); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--space-3); padding: var(--space-3) var(--space-4); border-radius: var(--radius-lg); background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); color: var(--color-warning-text); font-size: var(--text-sm);">
-          <div style="display: flex; align-items: center; gap: var(--space-2);">
-            ${icons.info}
-            <span><strong>Partial Surface Evidence:</strong> Only the Front display panel is captured. Declarations required on the Information panel (Manufacturer, MRP, Date, Consumer Care) cannot be confirmed absent without Back panel evidence.</span>
+        <div class="card card-mint" style="margin-bottom: var(--space-4); padding: var(--space-3) var(--space-4); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--space-3); border-color: var(--color-warning);">
+          <div style="display: flex; align-items: center; gap: var(--space-2); font-size: var(--text-xs); color: var(--color-warning-text);">
+            ${icons.alertTriangle}
+            <span><strong>Partial Evidence:</strong> Only Front panel is captured. Add Back panel to verify MRP, Manufacturer, and Dates.</span>
           </div>
-          <a href="#/scan" class="btn btn-warning btn-sm" style="color: #000; font-weight: 600; white-space: nowrap;">
-            + Capture Back Panel
+          <a href="#/scan" class="btn btn-sm" style="background: var(--color-warning); color: #FFF; font-size: 11px;">
+            + Add Back Panel
           </a>
         </div>
       ` : ''}
 
       <!-- Main Layout: Evidence Photos + Extracted Fields -->
-      <div class="review-split-layout" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr)); gap: var(--space-6); margin-bottom: var(--space-6);">
-        <!-- Column 1: Image Evidence & Surfaces -->
-        <div class="card card-glass">
-          <div class="card-header">
-            <h3 class="card-title">${icons.camera} Captured Surface Evidence</h3>
-            <span style="font-size: var(--text-xs); color: var(--text-muted); font-family: var(--font-mono);">
-              ${surfaces.length > 0 ? `${surfaces.length} surface(s)` : `${imageList.length} photo(s)`}
-            </span>
-          </div>
-          <div class="card-body">
-            <!-- Surface Badges List -->
+      <div style="display: flex; flex-direction: column; gap: var(--space-4); margin-bottom: var(--space-4);">
+        <!-- Column 1: Image Evidence -->
+        <div class="card" style="padding: var(--space-4);">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-3);">
+            <h3 style="font-size: var(--text-sm); font-weight: 800; color: var(--text-primary); text-transform: uppercase; letter-spacing: 0.03em;">
+              ${icons.camera} Package Evidence (${surfaces.length > 0 ? surfaces.length : imageList.length})
+            </h3>
             ${surfaces.length > 0 ? `
-              <div style="display: flex; gap: var(--space-2); flex-wrap: wrap; margin-bottom: var(--space-3);">
+              <div style="display: flex; gap: 4px; flex-wrap: wrap;">
                 ${surfaces.map((s, i) => `
-                  <span style="font-size: 11px; padding: 2px 8px; border-radius: var(--radius-full); background: var(--bg-surface-raised); border: 1px solid var(--border-glass); font-family: var(--font-mono);">
-                    <strong>${s.surface}</strong> (#${i + 1})
+                  <span class="badge badge-neutral" style="font-size: 10px;">
+                    ${s.surface} #${i + 1}
                   </span>
                 `).join('')}
               </div>
             ` : ''}
-
-            ${renderImageGallery({
-              primaryImageUrl: inspection.image_url,
-              imageUrls: imageList,
-            })}
           </div>
+
+          ${renderImageGallery({
+            primaryImageUrl: inspection.image_url,
+            imageUrls: imageList,
+          })}
         </div>
 
-        <!-- Column 2: Structured Fields -->
-        <div class="card card-glass">
-          <div class="card-header">
+        <!-- Column 2: Structured Declarations -->
+        <div class="card" style="padding: var(--space-4);">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-3);">
             <div>
-              <h3 class="card-title">${icons.fileText} Extracted Mandatory Declarations</h3>
-              <p class="card-description">PaddleOCR extractions evaluated against Legal Metrology Rules, 2011</p>
+              <h3 style="font-size: var(--text-sm); font-weight: 800; color: var(--text-primary); text-transform: uppercase; letter-spacing: 0.03em;">
+                ${icons.fileText} Mandatory Declarations
+              </h3>
+              <p style="font-size: 11px; color: var(--text-secondary); margin: 0;">
+                Evaluated under Legal Metrology Rules, 2011
+              </p>
             </div>
-            <a href="#/catalogue" class="btn btn-ghost btn-sm" title="Search market reference catalogue">
+            <a href="#/catalogue" class="btn btn-ghost btn-sm" style="font-size: 11px;">
               ${icons.search} Reference Match
             </a>
           </div>
-          <div class="card-body">
-            ${renderExtractedDataTable(extracted, surfaces)}
-          </div>
+
+          ${renderExtractedDataTable(extracted, surfaces)}
         </div>
       </div>
 
-      <!-- Action Banner -->
-      <div class="card card-glass" style="background: linear-gradient(135deg, rgba(31,41,55,0.8), rgba(17,24,39,0.9)); border: 1px solid var(--border-glass-hover); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--space-4);">
+      <!-- Action Card: Run Compliance Audit -->
+      <div class="card card-mint" style="padding: var(--space-4); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--space-3);">
         <div>
-          <h4 style="font-weight: 700; color: var(--text-primary); margin-bottom: 2px;">
+          <h4 style="font-weight: 800; color: var(--primary-900); font-size: var(--text-sm); margin-bottom: 2px;">
             Ready for Statutory Compliance Assessment?
           </h4>
-          <p style="font-size: var(--text-sm); color: var(--text-muted);">
-            The backend engine will evaluate Rules 6, 10, 11, 12, 13, 14, 16, 17, 24, and 26 against this package evidence.
+          <p style="font-size: var(--text-xs); color: #374151; margin: 0;">
+            The engine evaluates Rules 6, 10, 11, 12, 13, 14, 16, 17, 24, and 26.
           </p>
         </div>
 
-        <div style="display: flex; gap: var(--space-3); flex-wrap: wrap;">
+        <div>
           ${renderButton({
             id: 'btn-run-evaluation',
             text: 'Run Compliance Audit',
-            variant: 'success',
+            variant: 'primary',
             size: 'lg',
             icon: icons.shieldCheck,
           })}
@@ -171,13 +202,11 @@ export function renderReviewPage(params = {}) {
 }
 
 export function attachReviewPageEvents() {
-  // Empty state button
   const btnStart = document.getElementById('btn-start-scan');
   if (btnStart) {
     btnStart.addEventListener('click', () => router.navigate('/scan'));
   }
 
-  // Run Evaluation Trigger
   const btnRun = document.getElementById('btn-run-evaluation');
   if (btnRun) {
     btnRun.addEventListener('click', async () => {
@@ -185,12 +214,12 @@ export function attachReviewPageEvents() {
       const inspectionId = state.currentInspection?.id;
 
       if (!inspectionId) {
-        inspectionContext.setError('No valid inspection ID found. Please start a new inspection scan.');
+        inspectionContext.setError('No valid inspection ID found. Please start a new scan.');
         return;
       }
 
       try {
-        inspectionContext.setLoading(true, 'Executing Legal Metrology Rule Engine against statutory rules...');
+        inspectionContext.setLoading(true, 'Executing Legal Metrology Rule Engine...');
         const res = await evaluateInspection(inspectionId);
 
         if (res && res.data) {
@@ -198,7 +227,7 @@ export function attachReviewPageEvents() {
           inspectionContext.setLoading(false);
           router.navigate(`/inspections/${inspectionId}/report`);
         } else {
-          throw new Error(res?.message || 'Compliance evaluation returned an invalid response structure.');
+          throw new Error(res?.message || 'Compliance evaluation returned an invalid response.');
         }
       } catch (err) {
         console.error('Compliance evaluation error:', err);

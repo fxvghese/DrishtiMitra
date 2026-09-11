@@ -2,7 +2,9 @@
  * DrishtiMitra - Application Constants and Legal Rule Definitions
  */
 
-export const API_BASE_URL = window.localStorage.getItem('dm_api_base_url') || 'https://drishtimitra-backend.onrender.com';
+export const API_BASE_URL =
+    window.localStorage.getItem('dm_api_base_url') ||
+    'https://drishtimitra-backend.onrender.com';
 
 // ── Supabase Client Configuration ──────────────────────────────────────────
 // These are the PUBLIC anon/publishable keys — safe to store client-side.

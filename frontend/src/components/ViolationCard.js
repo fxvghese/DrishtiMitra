@@ -1,8 +1,8 @@
 /**
  * DrishtiMitra - ViolationCard Component
- * Structured Finding Card fulfilling:
- * AI Assessment ↓ Evidence ↓ Applicable Requirement ↓ Inspector Verification [ACCEPT] [REJECT] ↓ Comment
- * Clearly separates AI recommendation from statutory human inspector decision
+ * Structured Finding Card with clear separation:
+ * AI ASSESSMENT → EVIDENCE → APPLICABLE REQUIREMENT → INSPECTOR REVIEW → INSPECTOR DECISION
+ * Visual Identity: Green & White theme
  */
 
 import { renderStatusBadge } from './StatusBadge.js';
@@ -22,79 +22,79 @@ export function renderViolationCard(violation = {}, index = 0, inspectorDecision
   const currentComment = inspectorDecision.comment || '';
 
   return `
-    <div class="violation-card animate-fade-in" style="background: var(--bg-surface); border: 1px solid var(--border-glass-hover); border-radius: var(--radius-xl); padding: var(--space-5); margin-bottom: var(--space-5); box-shadow: var(--shadow-md);">
+    <div class="card violation-card animate-fade-in" style="border-radius: var(--radius-2xl); border: 1px solid var(--border-default); background: #FFFFFF; padding: var(--space-4); margin-bottom: var(--space-4); box-shadow: var(--shadow-sm);">
       <!-- Card Header -->
-      <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--space-2); margin-bottom: var(--space-3); border-bottom: 1px solid var(--border-glass); padding-bottom: var(--space-3);">
+      <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--space-2); margin-bottom: var(--space-3); border-bottom: 1px solid var(--border-default); padding-bottom: var(--space-3);">
         <div style="display: flex; align-items: center; gap: var(--space-2);">
           <span style="color: ${isFail ? 'var(--color-danger)' : 'var(--color-warning)'};">
             ${isFail ? icons.xCircle : icons.alertTriangle}
           </span>
-          <span style="font-weight: 800; font-size: var(--text-base); color: var(--text-primary);">
+          <span style="font-weight: 800; font-size: var(--text-sm); color: var(--text-primary);">
             Finding #${index + 1}: ${ruleMeta.name} (${ruleCode})
           </span>
         </div>
         <div style="display: flex; align-items: center; gap: var(--space-2);">
           ${renderStatusBadge(violation.severity || 'HIGH', 'severity')}
           <span class="badge ${isFail ? 'badge-non-compliant' : 'badge-review'}">
-            ${isFail ? 'Potential Issue Identified' : 'Inspector Verification Required'}
+            ${isFail ? 'Potential Non-Compliance Detected' : 'Inspector Verification Required'}
           </span>
         </div>
       </div>
 
       <!-- 1. AI Assessment -->
-      <div style="margin-bottom: var(--space-4); background: rgba(15, 23, 42, 0.6); padding: var(--space-3) var(--space-4); border-radius: var(--radius-lg); border-left: 3px solid var(--primary-500);">
-        <div style="display: flex; align-items: center; gap: var(--space-2); margin-bottom: 4px;">
-          <span style="font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: var(--primary-400); font-family: var(--font-mono);">
+      <div style="margin-bottom: var(--space-3); background: #FEF2F2; border-left: 3px solid var(--color-danger); border-radius: var(--radius-md); padding: var(--space-3);">
+        <div style="display: flex; align-items: center; gap: var(--space-2); margin-bottom: 2px;">
+          <span style="font-size: 10px; font-weight: 800; text-transform: uppercase; color: var(--color-danger); letter-spacing: 0.04em;">
             1. AI Assessment (Recommendation Only)
           </span>
         </div>
-        <p style="font-size: var(--text-sm); color: var(--text-primary); line-height: 1.45; margin: 0;">
-          ${violation.reason || violation.message || 'Potential non-compliance identified during automated extraction review.'}
+        <p style="font-size: var(--text-xs); color: var(--text-primary); margin: 0; line-height: 1.5;">
+          ${violation.reason || violation.message || 'Potential statutory omission or discrepancy identified during automated scanning.'}
         </p>
       </div>
 
       <!-- 2. Evidence -->
-      <div style="margin-bottom: var(--space-4); background: var(--bg-surface-raised); padding: var(--space-3) var(--space-4); border-radius: var(--radius-lg); border: 1px solid var(--border-glass);">
-        <div style="font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); font-family: var(--font-mono); margin-bottom: 6px;">
+      <div style="margin-bottom: var(--space-3); background: var(--bg-surface-raised); border: 1px solid var(--border-default); border-radius: var(--radius-md); padding: var(--space-3);">
+        <div style="font-size: 10px; font-weight: 800; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 4px;">
           2. Package Evidence
         </div>
-        <div style="display: flex; flex-wrap: wrap; gap: var(--space-4); font-size: var(--text-xs); font-family: var(--font-mono);">
+        <div style="display: flex; flex-wrap: wrap; gap: var(--space-3); font-size: var(--text-xs); font-family: var(--font-mono);">
           <span>Inspected Field: <strong style="color: var(--text-primary);">${violation.field_name || 'Declaration Field'}</strong></span>
           ${violation.detected_value ? `
-            <span>Detected Text: <strong style="color: var(--primary-300);">${violation.detected_value}</strong></span>
+            <span>Detected Text: <strong style="color: var(--primary-700);">${violation.detected_value}</strong></span>
           ` : `
-            <span>Detected Text: <em style="color: var(--color-warning-text);">None detected in captured surfaces</em></span>
+            <span style="color: var(--color-warning);">Detected Text: <em>None detected in captured evidence</em></span>
           `}
         </div>
 
         ${violation.bounding_box ? `
-          <div style="margin-top: var(--space-2); font-size: 11px; color: var(--text-muted);">
+          <div style="margin-top: 4px; font-size: 11px; color: var(--text-secondary);">
             Evidence Coordinates: <code>[${violation.bounding_box.join(', ')}]</code>
           </div>
         ` : ''}
       </div>
 
-      <!-- 3. Applicable Statutory Requirement -->
-      <div style="margin-bottom: var(--space-5); padding: var(--space-3) var(--space-4); background: rgba(59, 130, 246, 0.05); border: 1px dashed rgba(59, 130, 246, 0.3); border-radius: var(--radius-lg);">
-        <div style="font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: var(--primary-400); font-family: var(--font-mono); margin-bottom: 4px;">
+      <!-- 3. Applicable Requirement -->
+      <div style="margin-bottom: var(--space-4); background: #F8FAFC; border: 1px solid var(--border-default); border-radius: var(--radius-md); padding: var(--space-3);">
+        <div style="font-size: 10px; font-weight: 800; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 2px;">
           3. Applicable Statutory Requirement
         </div>
-        <p style="font-size: var(--text-xs); color: var(--text-secondary); line-height: 1.5; margin: 0;">
-          <strong>${ruleMeta.section || 'Legal Metrology (Packaged Commodities) Rules, 2011'}:</strong> ${ruleMeta.description}
+        <p style="font-size: var(--text-xs); color: var(--text-secondary); margin: 0; line-height: 1.5;">
+          <strong>${ruleMeta.section || 'Legal Metrology Rules, 2011'}:</strong> ${ruleMeta.description}
         </p>
       </div>
 
-      <!-- 4. Human Inspector Verification -->
-      <div class="inspector-decision-block" style="background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95)); border: 1px solid var(--primary-600)44; border-radius: var(--radius-lg); padding: var(--space-4);">
+      <!-- 4. Inspector Decision -->
+      <div style="background: var(--bg-mint); border: 1px solid var(--bg-mint-border); border-radius: var(--radius-xl); padding: var(--space-3) var(--space-4);">
         <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--space-2); margin-bottom: var(--space-3);">
           <div style="display: flex; align-items: center; gap: var(--space-2);">
-            <span style="color: var(--color-warning);">${icons.shieldCheck}</span>
-            <span style="font-weight: 800; font-size: var(--text-xs); text-transform: uppercase; color: var(--text-primary); letter-spacing: 0.05em;">
-              4. Statutory Officer Determination
+            <span style="color: var(--primary-700);">${icons.shieldCheck}</span>
+            <span style="font-weight: 800; font-size: var(--text-xs); text-transform: uppercase; color: var(--primary-900); letter-spacing: 0.03em;">
+              4. Inspector Decision
             </span>
           </div>
 
-          <!-- Accept / Reject Toggle Buttons -->
+          <!-- Accept / Reject Buttons -->
           <div style="display: flex; gap: var(--space-2);">
             <button
               type="button"
@@ -113,23 +113,22 @@ export function renderViolationCard(violation = {}, index = 0, inspectorDecision
               data-decision="REJECT"
               style="font-size: 11px; padding: 4px 12px; font-weight: 700;"
             >
-              ${currentDecision === 'REJECT' ? '✓ Overruled by Officer' : 'Overrule / Dismiss'}
+              ${currentDecision === 'REJECT' ? '✓ Overruled by Officer' : 'Overrule / Reject'}
             </button>
           </div>
         </div>
 
         <!-- Inspector Comment -->
-        <div class="form-group" style="margin-bottom: 0;">
-          <label class="form-label" style="font-size: 11px; color: var(--text-muted); display: flex; justify-content: space-between;">
-            <span>Inspector Statutory Notes / Legal Basis:</span>
-            <span style="font-size: 10px; color: var(--text-muted);">(Saved in official audit trail)</span>
+        <div>
+          <label class="form-label" style="font-size: 11px; color: var(--primary-900);">
+            Add inspector comment:
           </label>
           <textarea
             class="form-textarea finding-inspector-comment"
             data-rule-code="${ruleCode}"
-            placeholder="Enter officer notes or justification for accepting/overruling this finding..."
+            placeholder="Add inspector comment or justification for legal audit dossier..."
             rows="2"
-            style="font-size: var(--text-xs); padding: 8px 10px;"
+            style="font-size: var(--text-xs); padding: 8px 10px; background: #FFFFFF;"
           >${currentComment}</textarea>
         </div>
       </div>

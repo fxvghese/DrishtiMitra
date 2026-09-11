@@ -1,13 +1,12 @@
 /**
  * DrishtiMitra - ScanPage Component
- * Multi-surface evidence ingestion (Front, Back, Side, Other), image preview,
- * client hints, and PaddleOCR initiation with failure recovery
+ * "New Inspection" - Multi-surface evidence ingestion & real pipeline processing
+ * Visual Identity: Green & White Mobile-First Inspection System
  */
 
 import { renderFileDropzone } from '../components/FileDropzone.js';
 import { renderButton } from '../components/Button.js';
 import { renderAlert } from '../components/Alert.js';
-import { renderLoadingSpinner } from '../components/LoadingSpinner.js';
 import { icons } from '../assets/icons.js';
 import { inspectionContext } from '../context/InspectionContext.js';
 import { submitScan } from '../services/inspectionService.js';
@@ -17,13 +16,68 @@ import { validateImageFile } from '../utils/validators.js';
 export function renderScanPage() {
   const state = inspectionContext.getState();
 
+  // ── Technical Processing Screen Pipeline (Section 8) ────────────────────────
   if (state.isLoading) {
     return `
-      <div class="card card-glass animate-fade-in" style="max-width: 720px; margin: var(--space-8) auto; text-align: center;">
-        ${renderLoadingSpinner(state.loadingMessage || 'Uploading package surfaces & executing PaddleOCR extraction...')}
-        <p style="font-size: var(--text-xs); color: var(--text-muted); margin-top: var(--space-2);">
-          Preprocessing multi-surface images, aligning text blocks, and extracting statutory declarations.
+      <div class="processing-pipeline-card animate-fade-in">
+        <div style="width: 56px; height: 56px; border-radius: 50%; background: var(--primary-100); color: var(--primary-600); display: flex; align-items: center; justify-content: center; margin: 0 auto var(--space-3);">
+          <div class="animate-spin" style="width: 28px; height: 28px; border: 3px solid var(--primary-200); border-top-color: var(--primary-600); border-radius: 50%;"></div>
+        </div>
+
+        <h3 style="font-size: var(--text-lg); font-weight: 800; color: var(--text-primary); margin-bottom: 4px;">
+          Processing Package Evidence
+        </h3>
+        <p style="font-size: var(--text-xs); color: var(--text-secondary); max-width: 380px; margin: 0 auto;">
+          ${state.loadingMessage || 'Evaluating physical commodities against Legal Metrology Rules, 2011'}
         </p>
+
+        <!-- Technical Pipeline Steps -->
+        <div class="pipeline-step-list">
+          <div class="pipeline-step-item">
+            <span class="step-indicator-icon step-done">✓</span>
+            <span style="font-weight: 600; color: var(--primary-800);">Image received & authenticated</span>
+          </div>
+
+          <div class="pipeline-step-item">
+            <span class="step-indicator-icon step-done">✓</span>
+            <span style="font-weight: 600; color: var(--primary-800);">Image quality & orientation checked</span>
+          </div>
+
+          <div class="pipeline-step-item">
+            <span class="step-indicator-icon step-done">✓</span>
+            <span style="font-weight: 600; color: var(--primary-800);">Reading package text (PaddleOCR)</span>
+          </div>
+
+          <div class="pipeline-step-item" style="border-color: var(--primary-400); background: var(--bg-mint);">
+            <span class="step-indicator-icon step-active">●</span>
+            <span style="font-weight: 700; color: var(--primary-900);">Extracting statutory declarations</span>
+          </div>
+
+          <div class="pipeline-step-item" style="opacity: 0.85;">
+            <span class="step-indicator-icon step-pending">○</span>
+            <span style="color: var(--text-secondary);">Checking applicable rules (Rules 6–26)</span>
+          </div>
+
+          <div class="pipeline-step-item" style="opacity: 0.7;">
+            <span class="step-indicator-icon step-pending">○</span>
+            <span style="color: var(--text-secondary);">Preparing evidence dossier</span>
+          </div>
+        </div>
+
+        <!-- Technical Pipeline Breadcrumb Banner -->
+        <div class="pipeline-chain-bar">
+          <span>IMAGE</span>
+          <span>→</span>
+          <span>OCR</span>
+          <span>→</span>
+          <span>EXTRACTION</span>
+          <span>→</span>
+          <span>RULE CHECK</span>
+          <span>→</span>
+          <span>EVIDENCE</span>
+          <span>→</span>
+          <span>REVIEW</span>
+        </div>
       </div>
     `;
   }
@@ -33,167 +87,96 @@ export function renderScanPage() {
   const hasFront = state.surfaces.some(s => s.surface === 'FRONT');
 
   return `
-    <div class="scan-page-container animate-fade-in" style="max-width: 880px; margin: 0 auto;">
-      <!-- Hero Header -->
-      <div style="text-align: center; margin-bottom: var(--space-6);">
-        <div style="display: inline-flex; align-items: center; gap: var(--space-2); background: rgba(59,130,246,0.12); color: var(--primary-400); padding: 5px 14px; border-radius: var(--radius-full); font-size: var(--text-xs); font-weight: 700; text-transform: uppercase; border: 1px solid rgba(59,130,246,0.28); margin-bottom: var(--space-3); letter-spacing: 0.04em;">
-          ${icons.shieldCheck} AI ASSISTS. INSPECTOR DECIDES.
+    <div class="scan-page-container animate-fade-in" style="max-width: 680px; margin: 0 auto;">
+      <!-- Page Header -->
+      <div style="margin-bottom: var(--space-4);">
+        <div style="display: inline-flex; align-items: center; gap: 6px; background: var(--primary-100); color: var(--primary-700); padding: 3px 10px; border-radius: var(--radius-full); font-size: 11px; font-weight: 700; text-transform: uppercase; margin-bottom: var(--space-2); border: 1px solid var(--primary-200);">
+          ${icons.shieldCheck} AI ASSISTS • INSPECTOR DECIDES
         </div>
-        <h1 style="font-size: var(--text-3xl); font-weight: 800; color: var(--text-primary); letter-spacing: -0.025em; line-height: 1.2;">
-          New Statutory Package Inspection
+        <h1 style="font-size: clamp(1.4rem, 5vw, 1.85rem); font-weight: 800; color: var(--text-primary); margin: 0;">
+          New Inspection
         </h1>
-        <p style="font-size: var(--text-base); color: var(--text-secondary); max-width: 640px; margin: var(--space-2) auto 0; line-height: 1.6;">
-          Capture or upload multi-surface package evidence (Front, Back, Side). DrishtiMitra extracts statutory declarations for officer verification under Legal Metrology Rules, 2011.
+        <p style="font-size: var(--text-sm); color: var(--text-secondary); margin-top: 4px;">
+          Capture package evidence to begin inspection.
         </p>
-
-        <!-- Statutory Feature Chips -->
-        <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-2); margin-top: var(--space-4);">
-          <span style="font-size: var(--text-xs); color: var(--text-secondary); background: var(--bg-surface-raised); border: 1px solid var(--border-glass); padding: 3px 10px; border-radius: var(--radius-full); display: inline-flex; align-items: center; gap: 5px;">
-            <span style="color: var(--color-success-text);">&#10003;</span> Multi-Surface Fusion
-          </span>
-          <span style="font-size: var(--text-xs); color: var(--text-secondary); background: var(--bg-surface-raised); border: 1px solid var(--border-glass); padding: 3px 10px; border-radius: var(--radius-full); display: inline-flex; align-items: center; gap: 5px;">
-            <span style="color: var(--color-success-text);">&#10003;</span> PaddleOCR Extractions
-          </span>
-          <span style="font-size: var(--text-xs); color: var(--text-secondary); background: var(--bg-surface-raised); border: 1px solid var(--border-glass); padding: 3px 10px; border-radius: var(--radius-full); display: inline-flex; align-items: center; gap: 5px;">
-            <span style="color: var(--color-success-text);">&#10003;</span> Human Officer Overrule
-          </span>
-          <span style="font-size: var(--text-xs); color: var(--text-secondary); background: var(--bg-surface-raised); border: 1px solid var(--border-glass); padding: 3px 10px; border-radius: var(--radius-full); display: inline-flex; align-items: center; gap: 5px;">
-            <span style="color: var(--color-success-text);">&#10003;</span> Audit Dossier & Stamp
-          </span>
-        </div>
       </div>
 
-      <!-- Failure Recovery Banner -->
+      <!-- Ingestion Error Alert -->
       ${state.error ? `
-        <div class="card card-glass animate-fade-in" style="margin-bottom: var(--space-6); border-color: var(--color-danger-border); background: rgba(239, 68, 68, 0.05); padding: var(--space-4);">
-          <div style="display: flex; align-items: flex-start; gap: var(--space-3);">
-            <div style="color: var(--color-danger); font-size: 20px;">
-              ${icons.alertTriangle}
-            </div>
-            <div style="flex: 1;">
-              <h4 style="font-weight: 700; color: var(--color-danger-text); margin-bottom: 2px;">
-                Inspection Ingestion Issue
-              </h4>
-              <p style="font-size: var(--text-sm); color: var(--text-secondary); margin-bottom: var(--space-3);">
-                ${state.error}
-              </p>
-              <div style="display: flex; gap: var(--space-2); flex-wrap: wrap;">
-                ${renderButton({
-                  id: 'btn-retry-scan',
-                  text: 'Retry Analysis',
-                  variant: 'primary',
-                  size: 'sm',
-                  icon: icons.refresh,
-                })}
-                <label class="btn btn-secondary btn-sm" style="cursor: pointer;">
-                  ${icons.camera} Retake Image
-                  <input type="file" id="file-input-retake" accept="image/*" capture="environment" style="display: none;">
-                </label>
-                <label class="btn btn-ghost btn-sm" style="cursor: pointer;">
-                  + Capture Another Surface
-                  <input type="file" id="file-input-add-surface" accept="image/*" style="display: none;">
-                </label>
-              </div>
-            </div>
-          </div>
+        <div style="margin-bottom: var(--space-4);">
+          ${renderAlert({
+            type: 'danger',
+            title: 'Inspection Error',
+            message: state.error,
+          })}
         </div>
       ` : ''}
 
-      <!-- Surface Coverage Advisory -->
-      ${hasSurfaces && hasFront && !hasBack ? `
-        <div class="alert alert-warning animate-fade-in" style="margin-bottom: var(--space-4); display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3) var(--space-4); border-radius: var(--radius-lg); background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); color: var(--color-warning-text); font-size: var(--text-sm);">
-          ${icons.info}
-          <div>
-            <strong>Partial Evidence Captured:</strong> Only the Front display panel is selected. Statutory information declarations (Manufacturer address, MRP, Date, and Consumer Care) usually appear on the Back information panel. Add the Back panel to avoid "Insufficient evidence" in the statutory evaluation.
-          </div>
-        </div>
-      ` : ''}
-
-      <!-- Main Upload & Evidence Card -->
-      <div class="card card-glass" style="margin-bottom: var(--space-6);">
-        <div class="card-header">
-          <div>
-            <h3 class="card-title">${icons.camera} 1. Package Surface Evidence</h3>
-            <p class="card-description">Upload or capture package surfaces. Assign Front, Back, or Side tags for multi-panel analysis.</p>
-          </div>
-          <span class="badge ${hasSurfaces ? 'badge-compliant' : 'badge-exempt'}">
-            ${hasSurfaces ? `${state.surfaces.length} surface(s) selected` : 'Awaiting evidence'}
-          </span>
-        </div>
-
-        <div class="card-body">
-          ${renderFileDropzone(state.surfaces)}
-        </div>
+      <!-- Multi-Surface Evidence Dropzone -->
+      <div class="card" style="margin-bottom: var(--space-4); padding: var(--space-4);">
+        ${renderFileDropzone(state.surfaces)}
       </div>
 
-      <!-- Optional Client Field Hints (Collapsible Accordion) -->
-      <div class="card card-glass" style="margin-bottom: var(--space-6);">
+      <!-- Optional Client Field Hints Accordion -->
+      <div class="card" style="margin-bottom: var(--space-4); padding: var(--space-3) var(--space-4);">
         <details id="advanced-hints-accordion">
-          <summary style="cursor: pointer; font-weight: 600; font-size: var(--text-sm); color: var(--text-secondary); display: flex; align-items: center; justify-content: space-between; padding: var(--space-2) 0; user-select: none;">
+          <summary style="cursor: pointer; font-weight: 600; font-size: var(--text-xs); color: var(--text-secondary); display: flex; align-items: center; justify-content: space-between; user-select: none; padding: 4px 0;">
             <span style="display: flex; align-items: center; gap: var(--space-2);">
-              ${icons.sparkles} 2. Optional Field Hints & Client OCR Override (Scenario Testing)
+              ${icons.sparkles} Optional Field Hints & Scenario OCR Override
             </span>
-            <span style="font-size: 11px; color: var(--primary-400); font-family: var(--font-mono);">(Click to expand)</span>
+            <span style="font-size: 11px; color: var(--primary-600); font-weight: 600;">(Expand)</span>
           </summary>
 
-          <div style="margin-top: var(--space-4); border-top: 1px solid var(--border-glass); padding-top: var(--space-4);">
-            <div class="form-row">
-              <div class="form-group">
+          <div style="margin-top: var(--space-3); border-top: 1px solid var(--border-default); padding-top: var(--space-3);">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); margin-bottom: var(--space-3);">
+              <div>
                 <label class="form-label" for="hint-product-name">Product Name Hint</label>
-                <input type="text" id="hint-product-name" class="form-input" placeholder="e.g. Good Bakes Cookies" value="${state.clientHints.productName || ''}">
+                <input type="text" id="hint-product-name" class="form-input" placeholder="e.g. Pure Fine Sugar" value="${state.clientHints.productName || ''}">
               </div>
-              <div class="form-group">
+              <div>
                 <label class="form-label" for="hint-manufacturer">Manufacturer Hint</label>
-                <input type="text" id="hint-manufacturer" class="form-input" placeholder="e.g. Good Bakes Ltd, Mumbai" value="${state.clientHints.manufacturer || ''}">
+                <input type="text" id="hint-manufacturer" class="form-input" placeholder="e.g. Apex Foods, Delhi" value="${state.clientHints.manufacturer || ''}">
               </div>
             </div>
 
-            <div class="form-row">
-              <div class="form-group">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); margin-bottom: var(--space-3);">
+              <div>
                 <label class="form-label" for="hint-net-qty">Net Quantity Hint</label>
-                <input type="text" id="hint-net-qty" class="form-input" placeholder="e.g. 200 g" value="${state.clientHints.netQuantity || ''}">
+                <input type="text" id="hint-net-qty" class="form-input" placeholder="e.g. 1 kg" value="${state.clientHints.netQuantity || ''}">
               </div>
-              <div class="form-group">
+              <div>
                 <label class="form-label" for="hint-mrp">MRP Hint</label>
-                <input type="text" id="hint-mrp" class="form-input" placeholder="e.g. Rs. 50" value="${state.clientHints.mrp || ''}">
+                <input type="text" id="hint-mrp" class="form-input" placeholder="e.g. Rs. 48.00" value="${state.clientHints.mrp || ''}">
               </div>
             </div>
 
-            <div class="form-group">
+            <div>
               <label class="form-label" for="hint-ocr-text">
-                Raw OCR Text Override (Scenario Testing)
-                <span class="form-hint">Simulate label extractions directly for fast scenario audits</span>
+                Direct Label Text Override (Scenario Testing)
               </label>
-              <textarea id="hint-ocr-text" class="form-textarea" placeholder="Paste raw label text lines here...">${state.clientHints.ocrText || ''}</textarea>
+              <textarea id="hint-ocr-text" class="form-textarea" rows="2" placeholder="Paste raw label text lines here...">${state.clientHints.ocrText || ''}</textarea>
             </div>
           </div>
         </details>
       </div>
 
-      <!-- Action Footer -->
-      <div class="scan-action-footer" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--space-4); padding: var(--space-2) 0;">
-        <div style="font-size: var(--text-xs); color: var(--text-muted); display: flex; align-items: center; gap: var(--space-2); max-width: 440px;">
-          ${icons.info}
-          <span>Package photos are processed securely through PaddleOCR and stored with signed access.</span>
-        </div>
+      <!-- Action Footer: Analyze Package -->
+      <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--space-3); padding-top: var(--space-2);">
+        ${renderButton({
+          id: 'btn-reset-scan',
+          text: 'Clear All',
+          variant: 'ghost',
+          disabled: !hasSurfaces && !state.clientHints.ocrText,
+        })}
 
-        <div class="scan-action-buttons" style="display: flex; gap: var(--space-3); flex-wrap: wrap; align-items: center;">
-          ${renderButton({
-            id: 'btn-reset-scan',
-            text: 'Clear All',
-            variant: 'ghost',
-            disabled: !hasSurfaces && !state.clientHints.ocrText,
-          })}
-
-          ${renderButton({
-            id: 'btn-submit-scan',
-            text: hasSurfaces ? `Analyze Package (${state.surfaces.length} Surface${state.surfaces.length > 1 ? 's' : ''})` : 'Select Photos to Scan',
-            variant: 'primary',
-            size: 'lg',
-            icon: icons.sparkles,
-            disabled: !hasSurfaces && !state.clientHints.ocrText,
-          })}
-        </div>
+        ${renderButton({
+          id: 'btn-submit-scan',
+          text: hasSurfaces ? `Analyze Package (${state.surfaces.length} Surface${state.surfaces.length > 1 ? 's' : ''})` : 'Analyze Package',
+          variant: 'primary',
+          size: 'lg',
+          icon: icons.arrowRight,
+          disabled: !hasSurfaces && !state.clientHints.ocrText,
+        })}
       </div>
     </div>
   `;
@@ -238,170 +221,118 @@ export function attachScanPageEvents() {
     });
   }
 
-  // Recovery retake input
-  const fileInputRetake = document.getElementById('file-input-retake');
-  if (fileInputRetake) {
-    fileInputRetake.addEventListener('change', (e) => {
-      const files = Array.from(e.target.files || []);
-      if (files.length > 0) {
-        inspectionContext.clearSurfaces();
-        inspectionContext.addFiles([files[0]]);
-      }
+  // Clear images
+  const btnClear = document.getElementById('btn-clear-images');
+  if (btnClear) {
+    btnClear.addEventListener('click', () => {
+      inspectionContext.clearSurfaces();
     });
   }
 
-  // Recovery add surface input
-  const fileInputAddSurface = document.getElementById('file-input-add-surface');
-  if (fileInputAddSurface) {
-    fileInputAddSurface.addEventListener('change', (e) => {
-      const files = Array.from(e.target.files || []);
-      if (files.length > 0) {
-        inspectionContext.addFiles([files[0]]);
-      }
+  const btnReset = document.getElementById('btn-reset-scan');
+  if (btnReset) {
+    btnReset.addEventListener('click', () => {
+      inspectionContext.resetInspection();
     });
   }
 
-  // Dropzone drag & drop
-  const dropzone = document.getElementById('dropzone');
-  if (dropzone) {
-    ['dragenter', 'dragover'].forEach(eventName => {
-      dropzone.addEventListener(eventName, (e) => {
-        e.preventDefault();
-        dropzone.classList.add('active');
-      });
-    });
-
-    ['dragleave', 'drop'].forEach(eventName => {
-      dropzone.addEventListener(eventName, (e) => {
-        e.preventDefault();
-        dropzone.classList.remove('active');
-      });
-    });
-
-    dropzone.addEventListener('drop', (e) => {
-      const files = Array.from(e.dataTransfer.files || []);
-      const validFiles = [];
-      for (const f of files) {
-        const check = validateImageFile(f);
-        if (check.valid) {
-          validFiles.push(f);
-        }
-      }
-      if (validFiles.length > 0) {
-        inspectionContext.addFiles(validFiles);
-      }
-    });
-  }
-
-  // Remove individual surface card
+  // Surface remove buttons
   document.querySelectorAll('.btn-remove-surface').forEach(btn => {
     btn.addEventListener('click', (e) => {
-      e.stopPropagation();
       const idx = parseInt(btn.dataset.index, 10);
       inspectionContext.removeSurface(idx);
     });
   });
 
-  // Change surface type tag
-  document.querySelectorAll('.select-surface-type').forEach(select => {
-    select.addEventListener('change', (e) => {
-      const idx = parseInt(e.target.dataset.index, 10);
-      const newType = e.target.value;
-      inspectionContext.updateSurfaceType(idx, newType);
+  // Surface type selector dropdowns
+  document.querySelectorAll('.select-surface-type').forEach(sel => {
+    sel.addEventListener('change', (e) => {
+      const idx = parseInt(sel.dataset.index, 10);
+      inspectionContext.updateSurfaceType(idx, e.target.value);
     });
   });
 
-  // Replace surface image file
-  document.querySelectorAll('.file-input-replace').forEach(input => {
-    input.addEventListener('change', (e) => {
-      const idx = parseInt(e.target.dataset.index, 10);
-      const files = Array.from(e.target.files || []);
-      if (files.length > 0) {
-        const check = validateImageFile(files[0]);
-        if (check.valid) {
-          inspectionContext.replaceSurface(idx, files[0]);
-        } else {
+  // Surface replace file input
+  document.querySelectorAll('.file-input-replace').forEach(inp => {
+    inp.addEventListener('change', (e) => {
+      const idx = parseInt(inp.dataset.index, 10);
+      const file = e.target.files?.[0];
+      if (file) {
+        const check = validateImageFile(file);
+        if (!check.valid) {
           inspectionContext.setError(check.error);
+          return;
         }
+        inspectionContext.replaceSurfaceFile(idx, file);
       }
     });
   });
 
-  // Clear all surfaces
-  const btnClearImages = document.getElementById('btn-clear-images');
-  if (btnClearImages) {
-    btnClearImages.addEventListener('click', () => {
-      inspectionContext.clearSurfaces();
-    });
-  }
-
-  // Clear Form
-  const btnReset = document.getElementById('btn-reset-scan');
-  if (btnReset) {
-    btnReset.addEventListener('click', () => {
-      inspectionContext.reset();
-    });
-  }
-
-  // Bind Field Hints
-  const bindHint = (id, key) => {
-    const el = document.getElementById(id);
-    if (el) {
-      el.addEventListener('input', (e) => {
-        inspectionContext.setHints({ [key]: e.target.value });
-      });
-    }
-  };
-
-  bindHint('hint-product-name', 'productName');
-  bindHint('hint-manufacturer', 'manufacturer');
-  bindHint('hint-net-qty', 'netQuantity');
-  bindHint('hint-mrp', 'mrp');
-  bindHint('hint-ocr-text', 'ocrText');
-
-  // Submit Scan Flow
-  const triggerScan = async () => {
-    const currentState = inspectionContext.getState();
-    const filesToUpload = currentState.uploadedFiles;
-    const hints = currentState.clientHints;
-
-    if (filesToUpload.length === 0 && !hints.ocrText) {
-      inspectionContext.setError('Please capture or upload at least one package surface image to continue.');
-      return;
-    }
-
-    try {
-      inspectionContext.setLoading(true, 'Uploading package surfaces & executing PaddleOCR extraction...');
-      
-      const res = await submitScan({
-        files: filesToUpload,
-        ocrText: hints.ocrText,
-        productName: hints.productName,
-        manufacturer: hints.manufacturer,
-        netQuantity: hints.netQuantity,
-        mrp: hints.mrp,
-      });
-
-      if (res && res.data) {
-        inspectionContext.setScanResult(res.data);
-        inspectionContext.setLoading(false);
-        router.navigate(`/inspections/${res.data.id}/review`);
-      } else {
-        throw new Error(res?.message || 'Server returned an invalid response structure.');
-      }
-    } catch (err) {
-      console.error('Scan submission error:', err);
-      inspectionContext.setError(err.message || 'Failed to process package scan. Please verify backend is running and retry.');
-    }
-  };
-
+  // Submit scan trigger
   const btnSubmit = document.getElementById('btn-submit-scan');
   if (btnSubmit) {
-    btnSubmit.addEventListener('click', triggerScan);
+    btnSubmit.addEventListener('click', async () => {
+      const curr = inspectionContext.getState();
+      const files = curr.surfaces.map(s => s.file);
+
+      // Collect client hints
+      const productName = document.getElementById('hint-product-name')?.value || '';
+      const manufacturer = document.getElementById('hint-manufacturer')?.value || '';
+      const netQty = document.getElementById('hint-net-qty')?.value || '';
+      const mrp = document.getElementById('hint-mrp')?.value || '';
+      const ocrText = document.getElementById('hint-ocr-text')?.value || '';
+
+      inspectionContext.setClientHints({
+        productName,
+        manufacturer,
+        netQuantity: netQty,
+        mrp,
+        ocrText,
+      });
+
+      try {
+        inspectionContext.setLoading(true, 'Extracting statutory declarations & aligning text blocks...');
+        const res = await submitScan(files, {
+          productName,
+          manufacturer,
+          netQuantity: netQty,
+          mrp,
+          ocrText,
+          surfaces: curr.surfaces.map(s => s.surface),
+        });
+
+        if (res && res.data) {
+          inspectionContext.setCurrentInspection(res.data);
+          inspectionContext.setLoading(false);
+          router.navigate(`/inspections/${res.data.id}/review`);
+        } else {
+          throw new Error(res?.message || 'Server returned an invalid inspection response.');
+        }
+      } catch (err) {
+        console.error('Scan submission error:', err);
+        inspectionContext.setError(err.message || 'Failed to analyze package.');
+      }
+    });
   }
 
-  const btnRetry = document.getElementById('btn-retry-scan');
-  if (btnRetry) {
-    btnRetry.addEventListener('click', triggerScan);
+  // Lightbox previews
+  document.querySelectorAll('.btn-lightbox-preview').forEach(el => {
+    el.addEventListener('click', () => {
+      const src = el.dataset.src;
+      const modal = document.getElementById('lightbox-modal');
+      const img = document.getElementById('lightbox-image');
+      if (modal && img) {
+        img.src = src;
+        modal.classList.remove('sr-only');
+      }
+    });
+  });
+
+  const lightboxClose = document.getElementById('lightbox-close-btn');
+  if (lightboxClose) {
+    lightboxClose.addEventListener('click', () => {
+      const modal = document.getElementById('lightbox-modal');
+      if (modal) modal.classList.add('sr-only');
+    });
   }
 }

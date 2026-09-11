@@ -1,13 +1,13 @@
 /**
  * DrishtiMitra - ExtractedDataTable Component
- * Renders structured OCR extractions with integrity statuses:
- * - ✓ Confidently detected
- * - ⚠ Needs review
- * - ? Cannot verify (surface not captured)
- * - ✕ Potential issue (omission on captured surface)
- * Supports dual display (mobile cards vs desktop table)
+ * Renders structured OCR extractions in clean inspection cards with confidence indicators:
+ * - ✓ High confidence (Soft green pill)
+ * - ⚠ Needs review (Soft amber pill)
+ * - ? Insufficient evidence (Soft gray/neutral pill)
+ * Visual Identity: Green & White inspection card format
  */
 
+import { icons } from '../assets/icons.js';
 import { formatConfidence } from '../utils/formatters.js';
 
 export function renderExtractedDataTable(extractedData = {}, capturedSurfaces = []) {
@@ -15,12 +15,14 @@ export function renderExtractedDataTable(extractedData = {}, capturedSurfaces = 
   const hasFront = capturedSurfaces.some(s => s.surface === 'FRONT');
 
   const fields = [
-    { key: 'product_name', label: 'Product / Brand Name', rule: 'Rule 6', expectedSurface: 'FRONT' },
-    { key: 'manufacturer', label: 'Manufacturer / Packer', rule: 'Rule 6 & 10', expectedSurface: 'BACK' },
+    { key: 'product_name', label: 'Product / Generic Name', rule: 'Rule 6(1)(a)', expectedSurface: 'FRONT' },
     { key: 'net_quantity', label: 'Net Quantity', rule: 'Rule 11, 12, 13', expectedSurface: 'FRONT' },
-    { key: 'mrp', label: 'Maximum Retail Price (MRP)', rule: 'Rule 6', expectedSurface: 'BACK' },
-    { key: 'date', label: 'Mfg / Packaging Date', rule: 'Rule 6 & 16', expectedSurface: 'BACK' },
-    { key: 'consumer_care', label: 'Consumer Care Contact', rule: 'Rule 6 & 24', expectedSurface: 'BACK' },
+    { key: 'mrp', label: 'Maximum Retail Price (MRP)', rule: 'Rule 6(1)(e)', expectedSurface: 'BACK' },
+    { key: 'manufacturer', label: 'Manufacturer / Packer / Importer', rule: 'Rule 6(1)(b) & 10', expectedSurface: 'BACK' },
+    { key: 'address', label: 'Address & Premise Details', rule: 'Rule 10', expectedSurface: 'BACK' },
+    { key: 'date', label: 'Date of Mfg / Packaging', rule: 'Rule 6(1)(d) & 16', expectedSurface: 'BACK' },
+    { key: 'consumer_care', label: 'Consumer Care Contact', rule: 'Rule 6(1)(h) & 24', expectedSurface: 'BACK' },
+    { key: 'country_of_origin', label: 'Country of Origin (Imported)', rule: 'Rule 6(10)', expectedSurface: 'BACK' },
   ];
 
   const overallConfidence = extractedData.extraction_confidence ?? 95.0;
@@ -32,142 +34,88 @@ export function renderExtractedDataTable(extractedData = {}, capturedSurfaces = 
         return {
           type: 'NEEDS_REVIEW',
           badge: '⚠ Needs review',
-          badgeClass: 'chip-ambiguous',
-          note: 'Detected with low OCR confidence. Physical verification advised.',
+          badgeClass: 'badge badge-review',
+          note: 'Detected with moderate confidence. Inspector verification advised.',
         };
       }
       return {
         type: 'CONFIDENT',
-        badge: '✓ Confidently detected',
-        badgeClass: 'chip-confident',
+        badge: '✓ High confidence',
+        badgeClass: 'badge badge-compliant',
         note: null,
       };
     }
 
-    // Value is not detected. Did we capture the expected surface?
+    // Value missing
     if (field.expectedSurface === 'BACK' && !hasBack && capturedSurfaces.length > 0) {
       return {
-        type: 'CANNOT_VERIFY',
-        badge: '? Cannot verify',
-        badgeClass: 'chip-missing',
-        note: 'Back information panel was not captured in evidence. Declaration cannot be verified.',
+        type: 'INSUFFICIENT',
+        badge: '? Insufficient evidence',
+        badgeClass: 'badge badge-neutral',
+        note: 'Back information panel not captured in evidence.',
       };
     }
 
     return {
       type: 'POTENTIAL_ISSUE',
-      badge: '✕ Potential issue',
-      badgeClass: 'chip-missing',
-      note: 'Not detected on captured package evidence. Possible omission under Rule 6.',
+      badge: '⚠ Needs review',
+      badgeClass: 'badge badge-review',
+      note: 'Not detected on captured surfaces. Check physical label.',
     };
   }
 
   return `
     <div class="extracted-data-wrapper">
-      <!-- Confidence & Engine Meter Bar -->
-      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-4); background: var(--bg-surface-raised); padding: var(--space-3) var(--space-4); border-radius: var(--radius-lg); border: 1px solid var(--border-glass); flex-wrap: wrap; gap: var(--space-2);">
-        <div>
-          <span style="font-size: var(--text-xs); color: var(--text-muted); text-transform: uppercase; font-weight: 700; letter-spacing: 0.04em;">
-            AI Extraction Confidence
+      <!-- Statutory Verification Banner -->
+      <div style="background: var(--bg-mint); border: 1px solid var(--bg-mint-border); border-radius: var(--radius-xl); padding: var(--space-3) var(--space-4); margin-bottom: var(--space-4); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--space-2);">
+        <div style="display: flex; align-items: center; gap: var(--space-2);">
+          <span style="color: var(--primary-600);">${icons.shieldCheck}</span>
+          <span style="font-size: var(--text-xs); color: var(--primary-900); font-weight: 600;">
+            AI/OCR extracted declarations requiring officer verification where necessary.
           </span>
-          <div style="display: flex; align-items: center; gap: var(--space-3); margin-top: 4px;">
-            <div style="width: 120px; height: 8px; background: rgba(255,255,255,0.1); border-radius: var(--radius-full); overflow: hidden;">
-              <div style="width: ${Math.min(100, Math.max(0, overallConfidence))}%; height: 100%; background: linear-gradient(90deg, #10b981, #3b82f6); border-radius: var(--radius-full);"></div>
-            </div>
-            <span style="font-size: var(--text-sm); font-weight: 700; color: var(--text-primary); font-family: var(--font-mono);">
-              ${formatConfidence(overallConfidence)}
-            </span>
-          </div>
         </div>
 
-        <div style="text-align: right;">
-          <span style="font-size: var(--text-xs); color: var(--text-muted); text-transform: uppercase; font-weight: 700;">
-            Model Engine
+        <div style="display: flex; align-items: center; gap: var(--space-2);">
+          <span style="font-size: 11px; color: var(--text-secondary);">Overall Confidence:</span>
+          <span style="font-family: var(--font-mono); font-size: 11px; font-weight: 700; color: var(--primary-700); background: #FFFFFF; padding: 2px 8px; border-radius: var(--radius-full); border: 1px solid var(--bg-mint-border);">
+            ${formatConfidence(overallConfidence)}
           </span>
-          <div style="font-size: var(--text-xs); font-family: var(--font-mono); color: var(--color-info-text); font-weight: 600; margin-top: 2px;">
-            PaddleOCR (PP-OCRv4)
-          </div>
         </div>
       </div>
 
-      <!-- Mobile Touch Cards View (< 768px) -->
-      <div class="extracted-cards-mobile">
+      <!-- Clean Cards List -->
+      <div style="display: flex; flex-direction: column; gap: var(--space-2);">
         ${fields.map(f => {
           const val = extractedData[f.key];
           const integrity = getFieldIntegrity(f, val);
           const isPresent = Boolean(val && String(val).trim());
 
           return `
-            <div class="card card-glass" style="padding: var(--space-3) var(--space-4); border-radius: var(--radius-lg);">
-              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-2); gap: var(--space-2); flex-wrap: wrap;">
+            <div class="card" style="padding: var(--space-3) var(--space-4); border: 1px solid var(--border-default); border-radius: var(--radius-xl); background: #FFFFFF;">
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-1); gap: var(--space-2); flex-wrap: wrap;">
                 <div>
-                  <div style="font-weight: 700; font-size: var(--text-sm); color: var(--text-primary);">${f.label}</div>
-                  <div style="font-size: 11px; color: var(--text-muted); font-family: var(--font-mono);">${f.rule}</div>
+                  <span style="font-weight: 700; font-size: var(--text-sm); color: var(--text-primary);">${f.label}</span>
+                  <span style="font-size: 11px; color: var(--text-secondary); margin-left: 6px; font-family: var(--font-mono);">${f.rule}</span>
                 </div>
-                <span class="${integrity.badgeClass}" style="font-size: 11px;">
+                <span class="${integrity.badgeClass}">
                   ${integrity.badge}
                 </span>
               </div>
 
-              <div style="background: var(--bg-surface-raised); border: 1px solid var(--border-glass); border-radius: var(--radius-md); padding: var(--space-2) var(--space-3); word-break: break-word;">
+              <div style="background: var(--bg-surface-raised); border: 1px solid var(--border-default); border-radius: var(--radius-lg); padding: var(--space-2) var(--space-3); margin-top: 4px; word-break: break-word;">
                 ${isPresent ? `
-                  <span style="font-family: var(--font-mono); font-size: var(--text-sm); color: var(--text-primary); font-weight: 500;">
+                  <span style="font-family: var(--font-mono); font-size: var(--text-xs); color: var(--text-primary); font-weight: 600;">
                     ${val}
                   </span>
                 ` : `
-                  <span style="color: var(--text-muted); font-style: italic; font-size: var(--text-xs);">
-                    ${integrity.note || 'Not detected in evidence'}
+                  <span style="color: var(--text-muted); font-style: italic; font-size: 11px;">
+                    ${integrity.note || 'Declaration not detected in captured evidence'}
                   </span>
                 `}
               </div>
             </div>
           `;
         }).join('')}
-      </div>
-
-      <!-- Desktop Table View (>= 768px) -->
-      <div class="table-responsive extracted-table-desktop">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th style="width: 26%;">Mandatory Field</th>
-              <th style="width: 46%;">Detected Value</th>
-              <th style="width: 28%; text-align: right;">Evidence Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${fields.map(f => {
-              const val = extractedData[f.key];
-              const integrity = getFieldIntegrity(f, val);
-              const isPresent = Boolean(val && String(val).trim());
-
-              return `
-                <tr>
-                  <td>
-                    <div style="font-weight: 600; color: var(--text-primary); font-size: var(--text-sm);">${f.label}</div>
-                    <div style="font-size: 11px; color: var(--text-muted); font-family: var(--font-mono); margin-top: 2px;">${f.rule}</div>
-                  </td>
-                  <td>
-                    ${isPresent ? `
-                      <span style="font-family: var(--font-mono); font-size: var(--text-sm); color: var(--text-primary); font-weight: 500;">
-                        ${val}
-                      </span>
-                    ` : `
-                      <span style="color: var(--text-muted); font-style: italic; font-size: var(--text-xs);">
-                        ${integrity.note || 'Not detected'}
-                      </span>
-                    `}
-                  </td>
-                  <td style="text-align: right;">
-                    <span class="${integrity.badgeClass}" style="display: inline-block;">
-                      ${integrity.badge}
-                    </span>
-                  </td>
-                </tr>
-              `;
-            }).join('')}
-          </tbody>
-        </table>
       </div>
     </div>
   `;

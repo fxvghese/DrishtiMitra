@@ -1,13 +1,16 @@
 /**
  * DrishtiMitra - Inspection Details & Audit Trail Page
- * Displays full statutory dossier:
- * - Inspection ID & Timestamp
- * - Product & Manufacturer
- * - Captured Surfaces
- * - Extracted Declarations & Confidence
- * - Findings & Evidence (Rule reference/version)
- * - AI Assessment vs Human Inspector Decision
- * - Inspector ID & Comment
+ * Visual Identity: Green & White Mobile-First Portal
+ * Complete statutory dossier:
+ * 1. Inspection Information
+ * 2. Product Information
+ * 3. Captured Surfaces
+ * 4. Extracted Declarations & Confidence
+ * 5. Findings & Evidence
+ * 6. Applicable Requirements
+ * 7. AI Assessment vs Inspector Decision
+ * 8. Inspector Comment & Rule Version
+ * 9. Download / Print Inspection Report
  */
 
 import { renderButton } from '../components/Button.js';
@@ -24,16 +27,16 @@ export function renderInspectionDetailPage(params = {}) {
 
   if (!dossier) {
     return `
-      <div class="card card-glass" style="max-width: 600px; margin: var(--space-8) auto;">
+      <div class="card" style="max-width: 520px; margin: var(--space-8) auto; padding: var(--space-6); text-align: center;">
         ${renderEmptyState({
           title: 'Inspection Dossier Not Found',
-          message: `No saved inspection dossier found with ID "${inspectionId}". It may not have been saved yet.`,
+          message: `No saved inspection record found with ID "${inspectionId}".`,
           icon: icons.fileText,
           actionButton: renderButton({
             id: 'btn-back-to-dashboard',
             text: 'Return to Dashboard',
             variant: 'primary',
-            icon: icons.database,
+            icon: icons.home,
           }),
         })}
       </div>
@@ -44,263 +47,227 @@ export function renderInspectionDetailPage(params = {}) {
   const isCompliant = dossier.inspectorVerdict === 'COMPLIANT' || dossier.overallStatus === 'COMPLIANT';
   const isIssue = dossier.inspectorVerdict === 'POTENTIAL_NON_COMPLIANCE' || dossier.overallStatus === 'NON_COMPLIANT';
   const statusBadgeClass = isCompliant ? 'badge-compliant' : (isIssue ? 'badge-non-compliant' : 'badge-review');
-  const statusLabel = isCompliant ? 'STATUTORY COMPLIANT' : (isIssue ? 'POTENTIAL NON-COMPLIANCE' : 'INSUFFICIENT EVIDENCE');
-
+  const statusLabel = isCompliant ? 'Compliant' : (isIssue ? 'Potential Non-Compliance' : 'Needs Review');
   const findings = dossier.aiEvaluation?.violations || [];
 
   return `
-    <div class="inspection-detail-container animate-fade-in" style="max-width: 900px; margin: 0 auto;">
-      <!-- Header Toolbar -->
-      <div class="no-print" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--space-3); margin-bottom: var(--space-6);">
-        <div style="display: flex; align-items: center; gap: var(--space-3);">
+    <div class="inspection-detail-container animate-fade-in" style="max-width: 780px; margin: 0 auto;">
+      
+      <!-- Top Actions Toolbar -->
+      <div class="no-print" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--space-3); margin-bottom: var(--space-4);">
+        <div style="display: flex; align-items: center; gap: var(--space-2);">
           <a href="#/history" class="btn btn-secondary btn-sm" title="Back to History">
             ← History
           </a>
           <div>
-            <div style="font-size: var(--text-xs); color: var(--text-muted); font-family: var(--font-mono);">
-              DOSSIER RECORD • ${formatDate(dossier.timestamp || dossier.savedAt)}
+            <div style="font-size: 11px; color: var(--text-secondary); font-family: var(--font-mono);">
+              RECORD • ${formatDate(dossier.timestamp || dossier.savedAt)}
             </div>
-            <h1 style="font-size: var(--text-2xl); font-weight: 800; color: var(--text-primary);">
-              Statutory Inspection Audit Trail
+            <h1 style="font-size: clamp(1.3rem, 4.5vw, 1.75rem); font-weight: 800; color: var(--text-primary); margin: 0;">
+              Inspection Dossier
             </h1>
           </div>
         </div>
 
         <div style="display: flex; gap: var(--space-2); flex-wrap: wrap;">
           ${renderButton({
-            id: 'btn-print-detail',
-            text: 'Print Audit Record',
+            id: 'btn-download-report',
+            text: 'Download Report',
             variant: 'secondary',
+            size: 'sm',
             icon: icons.printer,
           })}
           ${renderButton({
             id: 'btn-new-from-detail',
             text: 'New Inspection',
             variant: 'primary',
+            size: 'sm',
             icon: icons.camera,
           })}
         </div>
       </div>
 
-      <!-- Overview Card -->
-      <div class="card card-glass" style="margin-bottom: var(--space-6); border: 2px solid ${isCompliant ? 'var(--color-success-border)' : (isIssue ? 'var(--color-danger-border)' : 'var(--color-warning-border)')};">
-        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--space-4);">
+      <!-- Statutory Overview Card -->
+      <div class="card" style="margin-bottom: var(--space-4); padding: var(--space-4); border: 2px solid ${isCompliant ? 'var(--primary-300)' : (isIssue ? '#FCA5A5' : '#FDE68A')}; background: ${isCompliant ? '#F0FDF4' : (isIssue ? '#FEF2F2' : '#FFFBEB')};">
+        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--space-3);">
           <div>
-            <div style="display: flex; align-items: center; gap: var(--space-2); margin-bottom: var(--space-1);">
-              <span style="font-family: var(--font-mono); font-size: var(--text-xs); color: var(--primary-400); font-weight: 700; background: rgba(59,130,246,0.1); padding: 2px 8px; border-radius: var(--radius-sm); border: 1px solid rgba(59,130,246,0.25);">
+            <div style="display: flex; align-items: center; gap: var(--space-2); margin-bottom: 4px;">
+              <span style="font-family: var(--font-mono); font-size: 11px; font-weight: 700; color: var(--text-primary); background: #FFFFFF; padding: 2px 8px; border-radius: var(--radius-sm); border: 1px solid var(--border-default);">
                 ${dossier.inspectionId}
               </span>
               <span class="badge ${statusBadgeClass}">
                 ${statusLabel}
               </span>
             </div>
-            <h2 style="font-size: var(--text-2xl); font-weight: 800; color: var(--text-primary); margin: 0;">
+            <h2 style="font-size: var(--text-xl); font-weight: 800; color: var(--text-primary); margin: 0;">
               ${dossier.productName || 'Package Commodity'}
             </h2>
-            <p style="font-size: var(--text-sm); color: var(--text-secondary); margin-top: 2px;">
-              ${dossier.manufacturer || 'Declared Manufacturer'}
+            <p style="font-size: var(--text-xs); color: var(--text-secondary); margin-top: 2px;">
+              ${dossier.manufacturer || 'Declared Manufacturer / Packer'}
             </p>
           </div>
 
           <div style="text-align: right;">
-            <div style="font-size: var(--text-xs); color: var(--text-muted);">Officer in Charge</div>
-            <div style="font-size: var(--text-sm); font-weight: 700; color: var(--text-primary); font-family: var(--font-mono);">
+            <div style="font-size: 11px; color: var(--text-secondary);">Authorized Inspector</div>
+            <div style="font-size: var(--text-xs); font-weight: 700; color: var(--text-primary); font-family: var(--font-mono);">
               ${dossier.inspectorId || 'inspector@legalmetrology.gov.in'}
             </div>
-            <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">
-              Recorded: ${formatDate(dossier.savedAt || dossier.timestamp)}
+            <div style="font-size: 10px; color: var(--text-secondary); margin-top: 2px;">
+              Timestamp: ${formatDate(dossier.savedAt || dossier.timestamp)}
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Human vs AI Determination Summary -->
-      <div class="card card-glass" style="margin-bottom: var(--space-6); background: var(--bg-surface-raised);">
-        <div class="card-header">
-          <h3 class="card-title">${icons.shieldCheck} Statutory Decision Separation</h3>
-        </div>
-        <div class="card-body" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--space-4);">
-          <!-- AI Column -->
-          <div style="background: rgba(15, 23, 42, 0.7); padding: var(--space-4); border-radius: var(--radius-lg); border-left: 3px solid var(--primary-500);">
-            <div style="font-size: 10px; font-weight: 800; text-transform: uppercase; color: var(--primary-400); font-family: var(--font-mono); margin-bottom: 4px;">
-              AI Automated Recommendation
+      <!-- Separation: AI Assessment vs Inspector Decision -->
+      <div class="card" style="margin-bottom: var(--space-4); padding: var(--space-4);">
+        <h3 style="font-size: var(--text-sm); font-weight: 800; color: var(--text-primary); text-transform: uppercase; letter-spacing: 0.03em; margin-bottom: var(--space-3);">
+          Decision Separation: AI Assessment vs. Inspector Decision
+        </h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--space-3);">
+          <!-- AI Assessment Column -->
+          <div style="background: #F8FAFC; padding: var(--space-3); border-radius: var(--radius-lg); border-left: 3px solid #64748B;">
+            <div style="font-size: 10px; font-weight: 800; text-transform: uppercase; color: #475569; font-family: var(--font-mono); margin-bottom: 2px;">
+              1. AI Automated Assessment
             </div>
-            <div style="font-size: var(--text-lg); font-weight: 800; color: var(--text-primary);">
+            <div style="font-size: var(--text-base); font-weight: 800; color: var(--text-primary);">
               ${dossier.overallStatus || 'ASSESSED'}
             </div>
-            <p style="font-size: var(--text-xs); color: var(--text-muted); margin-top: 4px;">
-              Based on PaddleOCR text extractions across Rules 6, 10, 11, 12, 13, 14, 16, 17, 24, and 26.
+            <p style="font-size: 11px; color: var(--text-secondary); margin-top: 3px; line-height: 1.4;">
+              Extracted via PaddleOCR and matched against Legal Metrology Rules, 2011 (Rules 6–26). Advisory only.
             </p>
           </div>
 
-          <!-- Inspector Column -->
-          <div style="background: rgba(15, 23, 42, 0.7); padding: var(--space-4); border-radius: var(--radius-lg); border-left: 3px solid var(--color-success);">
-            <div style="font-size: 10px; font-weight: 800; text-transform: uppercase; color: var(--color-success-text); font-family: var(--font-mono); margin-bottom: 4px;">
-              Statutory Officer Final Decision
+          <!-- Inspector Decision Column -->
+          <div style="background: var(--bg-mint); padding: var(--space-3); border-radius: var(--radius-lg); border-left: 3px solid var(--primary-600);">
+            <div style="font-size: 10px; font-weight: 800; text-transform: uppercase; color: var(--primary-800); font-family: var(--font-mono); margin-bottom: 2px;">
+              2. Inspector Final Determination
             </div>
-            <div style="font-size: var(--text-lg); font-weight: 800; color: var(--color-success-text);">
-              ${dossier.inspectorVerdict || dossier.overallStatus}
+            <div style="font-size: var(--text-base); font-weight: 800; color: var(--primary-900);">
+              ${dossier.inspectorVerdict || dossier.overallStatus || 'COMPLIANT'}
             </div>
-            <p style="font-size: var(--text-xs); color: var(--text-secondary); margin-top: 4px;">
-              ${dossier.inspectorComment || 'Official determination confirmed by Legal Metrology inspection officer.'}
+            <p style="font-size: 11px; color: #374151; margin-top: 3px; line-height: 1.4;">
+              ${dossier.inspectorComment || 'Inspector approved statutory compliance finding.'}
             </p>
           </div>
         </div>
       </div>
 
-      <!-- Captured Surfaces Gallery -->
-      <div class="card card-glass" style="margin-bottom: var(--space-6);">
-        <div class="card-header">
-          <h3 class="card-title">${icons.camera} Captured Package Surfaces</h3>
-          <span style="font-size: var(--text-xs); color: var(--text-muted); font-family: var(--font-mono);">
-            ${(dossier.capturedSurfaces || []).length} Surface(s)
-          </span>
+      <!-- Captured Surfaces Evidence -->
+      <div class="card" style="margin-bottom: var(--space-4); padding: var(--space-4);">
+        <h3 style="font-size: var(--text-sm); font-weight: 800; color: var(--text-primary); text-transform: uppercase; letter-spacing: 0.03em; margin-bottom: var(--space-3);">
+          Captured Surfaces (${(dossier.capturedSurfaces || []).length})
+        </h3>
+        ${(dossier.capturedSurfaces || []).length > 0 ? `
+          <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: var(--space-3);">
+            ${dossier.capturedSurfaces.map(s => `
+              <div style="border: 1px solid var(--border-default); border-radius: var(--radius-lg); padding: var(--space-2); background: #FFFFFF;">
+                <span class="badge badge-neutral" style="font-size: 10px; margin-bottom: 4px;">
+                  ${s.surface || 'SURFACE'}
+                </span>
+                ${s.previewUrl ? `
+                  <div style="height: 120px; border-radius: var(--radius-md); overflow: hidden; background: #F8FAFC;">
+                    <img src="${s.previewUrl}" alt="Surface" style="width: 100%; height: 100%; object-fit: contain;" />
+                  </div>
+                ` : `
+                  <div style="height: 80px; display: flex; align-items: center; justify-content: center; background: #F8FAFC; color: var(--text-secondary); font-size: 11px;">
+                    ${s.name || 'Image Recorded'}
+                  </div>
+                `}
+              </div>
+            `).join('')}
+          </div>
+        ` : `
+          <p style="font-size: var(--text-xs); color: var(--text-secondary); margin: 0;">
+            Surfaces authenticated and archived in secure database record.
+          </p>
+        `}
+      </div>
+
+      <!-- Extracted Declarations Record -->
+      <div class="card" style="margin-bottom: var(--space-4); padding: var(--space-4);">
+        <h3 style="font-size: var(--text-sm); font-weight: 800; color: var(--text-primary); text-transform: uppercase; letter-spacing: 0.03em; margin-bottom: var(--space-3);">
+          Extracted Mandatory Declarations
+        </h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: var(--space-2);">
+          ${Object.entries(extracted).map(([key, val]) => {
+            if (key === 'extraction_confidence' || key === 'id' || key === 'inspection_id') return '';
+            const label = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+            return `
+              <div style="background: var(--bg-surface-raised); border: 1px solid var(--border-default); border-radius: var(--radius-md); padding: var(--space-2) var(--space-3);">
+                <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; font-weight: 700;">
+                  ${label}
+                </div>
+                <div style="font-size: var(--text-xs); font-weight: 600; color: var(--text-primary); font-family: var(--font-mono); margin-top: 2px;">
+                  ${val || '—'}
+                </div>
+              </div>
+            `;
+          }).join('')}
         </div>
-        <div class="card-body">
-          <div style="display: flex; gap: var(--space-3); flex-wrap: wrap;">
-            ${(dossier.capturedSurfaces || []).map((surf, i) => `
-              <div style="padding: var(--space-3); background: var(--bg-surface-raised); border-radius: var(--radius-lg); border: 1px solid var(--border-glass); min-width: 160px;">
-                <div style="font-size: 10px; font-weight: 800; text-transform: uppercase; color: var(--primary-400); font-family: var(--font-mono);">
-                  ${surf.surface || surf} (#${i + 1})
+      </div>
+
+      <!-- Findings & Evidence -->
+      ${findings.length > 0 ? `
+        <div class="card" style="margin-bottom: var(--space-4); padding: var(--space-4);">
+          <h3 style="font-size: var(--text-sm); font-weight: 800; color: var(--text-primary); text-transform: uppercase; letter-spacing: 0.03em; margin-bottom: var(--space-3);">
+            Findings & Evidence Records (${findings.length})
+          </h3>
+          <div style="display: flex; flex-direction: column; gap: var(--space-3);">
+            ${findings.map((f, i) => `
+              <div style="background: #FFF; border: 1px solid var(--border-default); border-radius: var(--radius-lg); padding: var(--space-3); border-left: 3px solid ${f.status === 'FAIL' ? 'var(--color-danger)' : 'var(--color-warning)'};">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
+                  <span style="font-weight: 700; font-size: var(--text-xs); color: var(--text-primary);">
+                    Finding #${i + 1}: ${f.field_name || 'Declaration Field'}
+                  </span>
+                  <span class="badge ${f.status === 'FAIL' ? 'badge-non-compliant' : 'badge-review'}" style="font-size: 10px;">
+                    ${f.status}
+                  </span>
                 </div>
-                <div style="font-size: var(--text-xs); color: var(--text-primary); font-weight: 600; margin-top: 2px;">
-                  ${surf.name || (surf.surface === 'FRONT' ? 'Front Display Panel' : 'Information Panel')}
-                </div>
+                <p style="font-size: 11px; color: var(--text-secondary); margin: 0;">
+                  ${f.message || f.reason || 'Statutory review required.'}
+                </p>
+                ${f.detected_value ? `
+                  <div style="font-size: 11px; font-family: var(--font-mono); color: var(--text-primary); margin-top: 4px;">
+                    Detected: <strong>${f.detected_value}</strong>
+                  </div>
+                ` : ''}
               </div>
             `).join('')}
           </div>
         </div>
-      </div>
-
-      <!-- Extracted Declarations Record -->
-      <div class="card card-glass" style="margin-bottom: var(--space-6);">
-        <div class="card-header">
-          <h3 class="card-title">${icons.fileText} Mandatory Declarations Record</h3>
-          <span style="font-size: var(--text-xs); color: var(--primary-400); font-family: var(--font-mono);">
-            Confidence: ${formatConfidence(extracted.extraction_confidence ?? 95.0)}
-          </span>
-        </div>
-        <div class="card-body">
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: var(--space-3);">
-            <div style="background: var(--bg-surface-raised); padding: var(--space-3); border-radius: var(--radius-md); border: 1px solid var(--border-glass);">
-              <div style="font-size: 11px; color: var(--text-muted); font-family: var(--font-mono);">Product Name (Rule 6)</div>
-              <div style="font-weight: 600; font-size: var(--text-sm); color: var(--text-primary); margin-top: 2px;">
-                ${extracted.product_name || 'Not detected in evidence'}
-              </div>
-            </div>
-
-            <div style="background: var(--bg-surface-raised); padding: var(--space-3); border-radius: var(--radius-md); border: 1px solid var(--border-glass);">
-              <div style="font-size: 11px; color: var(--text-muted); font-family: var(--font-mono);">Manufacturer (Rule 6 & 10)</div>
-              <div style="font-weight: 600; font-size: var(--text-sm); color: var(--text-primary); margin-top: 2px;">
-                ${extracted.manufacturer || 'Not detected in evidence'}
-              </div>
-            </div>
-
-            <div style="background: var(--bg-surface-raised); padding: var(--space-3); border-radius: var(--radius-md); border: 1px solid var(--border-glass);">
-              <div style="font-size: 11px; color: var(--text-muted); font-family: var(--font-mono);">Net Quantity (Rules 11-13)</div>
-              <div style="font-weight: 600; font-size: var(--text-sm); color: var(--text-primary); margin-top: 2px;">
-                ${extracted.net_quantity || 'Not detected in evidence'}
-              </div>
-            </div>
-
-            <div style="background: var(--bg-surface-raised); padding: var(--space-3); border-radius: var(--radius-md); border: 1px solid var(--border-glass);">
-              <div style="font-size: 11px; color: var(--text-muted); font-family: var(--font-mono);">Maximum Retail Price (Rule 6)</div>
-              <div style="font-weight: 600; font-size: var(--text-sm); color: var(--text-primary); margin-top: 2px;">
-                ${extracted.mrp || 'Not detected in evidence'}
-              </div>
-            </div>
-
-            <div style="background: var(--bg-surface-raised); padding: var(--space-3); border-radius: var(--radius-md); border: 1px solid var(--border-glass);">
-              <div style="font-size: 11px; color: var(--text-muted); font-family: var(--font-mono);">Date of Mfg / Packaging (Rule 6 & 16)</div>
-              <div style="font-weight: 600; font-size: var(--text-sm); color: var(--text-primary); margin-top: 2px;">
-                ${extracted.date || 'Not detected in evidence'}
-              </div>
-            </div>
-
-            <div style="background: var(--bg-surface-raised); padding: var(--space-3); border-radius: var(--radius-md); border: 1px solid var(--border-glass);">
-              <div style="font-size: 11px; color: var(--text-muted); font-family: var(--font-mono);">Consumer Care Details (Rule 6 & 24)</div>
-              <div style="font-weight: 600; font-size: var(--text-sm); color: var(--text-primary); margin-top: 2px;">
-                ${extracted.consumer_care || 'Not detected in evidence'}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Findings & Inspector Overrules -->
-      ${findings.length > 0 ? `
-        <div class="card card-glass" style="margin-bottom: var(--space-6);">
-          <div class="card-header">
-            <h3 class="card-title">${icons.alertTriangle} Evaluated Statutory Findings (${findings.length})</h3>
-          </div>
-          <div class="card-body">
-            <div style="display: flex; flex-direction: column; gap: var(--space-3);">
-              ${findings.map((f, i) => {
-                const decision = dossier.inspectorDecisions?.[f.rule_code || i] || {};
-                const isAccepted = decision.decision === 'ACCEPT';
-
-                return `
-                  <div style="background: var(--bg-surface-raised); padding: var(--space-4); border-radius: var(--radius-lg); border: 1px solid var(--border-glass);">
-                    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--space-2); margin-bottom: var(--space-2);">
-                      <div style="font-weight: 700; color: var(--text-primary); font-size: var(--text-sm);">
-                        ${f.rule_code || `Finding #${i + 1}`} (Rule ${f.rule_number || ''})
-                      </div>
-                      <span class="badge ${isAccepted ? 'badge-non-compliant' : 'badge-compliant'}">
-                        ${isAccepted ? 'Officer Accepted Finding' : 'Officer Overruled'}
-                      </span>
-                    </div>
-
-                    <p style="font-size: var(--text-xs); color: var(--text-secondary); margin-bottom: var(--space-2);">
-                      ${f.reason || f.message || 'Non-compliance flagged by automated rule check.'}
-                    </p>
-
-                    ${decision.comment ? `
-                      <div style="font-size: 11px; color: var(--text-primary); background: rgba(59,130,246,0.08); padding: var(--space-2); border-radius: var(--radius-sm); border-left: 2px solid var(--primary-500);">
-                        <strong>Officer Justification:</strong> ${decision.comment}
-                      </div>
-                    ` : ''}
-                  </div>
-                `;
-              }).join('')}
-            </div>
-          </div>
-        </div>
       ` : ''}
 
-      <!-- Cryptographic Stamp & Integrity Footer -->
-      <div class="card card-glass" style="background: rgba(15, 23, 42, 0.85); border: 1px solid var(--border-glass-hover); padding: var(--space-5);">
-        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--space-3);">
-          <div>
-            <div style="font-size: var(--text-xs); text-transform: uppercase; font-weight: 700; color: var(--text-muted); letter-spacing: 0.05em;">
-              Department of Consumer Affairs — Legal Metrology Division
-            </div>
-            <div style="font-size: 11px; color: var(--text-muted); font-family: var(--font-mono); margin-top: 2px;">
-              Statutory Record Hash: SHA256-${(dossier.inspectionId || '').replace(/[^a-zA-Z0-9]/g, '').padEnd(16, '0').slice(0, 16).toUpperCase()}
-            </div>
-          </div>
-
-          <a href="#/history" class="btn btn-secondary btn-sm">
-            ← Return to History Log
-          </a>
-        </div>
+      <!-- Statutory Notice Disclaimer (Section 16) -->
+      <div style="background: var(--bg-mint); border: 1px solid var(--bg-mint-border); border-radius: var(--radius-xl); padding: var(--space-3) var(--space-4); margin-bottom: var(--space-4); text-align: center;">
+        <p style="font-size: 11px; color: var(--primary-900); font-weight: 600; margin: 0;">
+          AI-assisted assessment. Final inspection decision is made by the authorized inspector.
+        </p>
       </div>
+
     </div>
   `;
 }
 
 export function attachInspectionDetailPageEvents() {
-  const btnBack = document.getElementById('btn-back-to-dashboard');
-  if (btnBack) {
-    btnBack.addEventListener('click', () => router.navigate('/history'));
-  }
-
-  const btnPrint = document.getElementById('btn-print-detail');
-  if (btnPrint) {
-    btnPrint.addEventListener('click', () => window.print());
+  const btnDownload = document.getElementById('btn-download-report');
+  if (btnDownload) {
+    btnDownload.addEventListener('click', () => {
+      window.print();
+    });
   }
 
   const btnNew = document.getElementById('btn-new-from-detail');
   if (btnNew) {
-    btnNew.addEventListener('click', () => router.navigate('/scan'));
+    btnNew.addEventListener('click', () => {
+      router.navigate('/scan');
+    });
+  }
+
+  const btnBack = document.getElementById('btn-back-to-dashboard');
+  if (btnBack) {
+    btnBack.addEventListener('click', () => {
+      router.navigate('/dashboard');
+    });
   }
 }
