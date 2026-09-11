@@ -55,11 +55,11 @@ async def scan_label(
             detail="No image files provided or filenames are missing.",
         )
 
-        uploaded_storage_paths = []
+    uploaded_storage_paths = []
     extractions_list = []
     avg_confidences = []
 
-    # Initialize OCR engine once and reuse it for all images in this scan
+    # Initialize OCR engine once and reuse it for all images
     ocr_svc = get_ocr_service()
 
     try:
